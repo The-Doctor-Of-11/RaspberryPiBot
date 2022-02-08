@@ -3,8 +3,8 @@ from discord.ext import commands
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
 import subprocess
-import os
 from storage import tstore
+import feedparser
 
 description = '''PiBot in Python'''
 bot = commands.Bot(command_prefix='/', description=description)
@@ -41,5 +41,19 @@ async def stat(ctx):
     await ctx.send("```\n---------- Memory Status ----------\n\n" + mem + "\n```")
     await ctx.send("```\n---------- Top Processes ----------\n\n" + proc + "\n```")
     await ctx.send("```\n---------- Apache Status ----------\n\n" + apache + "\n```")
+
+@bot.command()
+async def Monroe911(ctx):
+    NewsFeed = feedparser.parse("https://www.monroecounty.gov/911/rss.php")
+    entry = NewsFeed.entries[1]
+    
+    response = "```\n---------- Event Title -------------\n\n" + entry.title + "\n```"
+    response += "```\n---------- Event Date -------------\n\n" + entry.pubDate + "\n```"
+    
+    await ctx.send(response)
+
+# @bot.command()
+# async def Monroe911(ctx):
+#     return null
 
 bot.run(TOKEN)
