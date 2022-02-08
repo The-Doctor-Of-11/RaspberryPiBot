@@ -4,4 +4,3 @@ discord.py>=3.10.0.2
 numpy>=1.21.2
 maidenhead>=1.6.0
 discord-py-slash-command>=3.0.1
-'OTM4NDcxMjgwNjY2MDg3NDM1.YfqxfQ.I8izvuaKQ9S1C0WE6Dktm5g7yTk'
