@@ -43,17 +43,17 @@ async def stat(ctx):
     await ctx.send("```\n---------- Apache Status ----------\n\n" + apache + "\n```")
 
 @bot.command()
-async def Monroe911(ctx):
-    NewsFeed = feedparser.parse("https://www.monroecounty.gov/911/rss.php")
-    entry = NewsFeed.entries[1]
-    
-    response = "```\n---------- Event Title -------------\n\n" + entry.title + "\n```"
-    response += "```\n---------- Event Date -------------\n\n" + entry.pubDate + "\n```"
-    
-    await ctx.send(response)
+async def M911(ctx, num=1):
 
-# @bot.command()
-# async def Monroe911(ctx):
-#     return null
+    d = feedparser.parse("https://www.monroecounty.gov/911/rss.php")
+    entry = d.entries[num]
+
+    i = 0
+    while i < num:
+        response = "```\n----------- Event Title -------------\n\n" + d['entries'][i]['title'] + "\n"
+        response += "\n---------- Event Date --------------\n\n" + d['entries'][i]['published'] + "\n"
+        response += "\n---------- Description -------------\n\n" + d['entries'][i]['summary'] + "\n```"
+        i += 1
+        await ctx.send(response)
 
 bot.run(TOKEN)
