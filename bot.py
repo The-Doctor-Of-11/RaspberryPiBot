@@ -1,14 +1,18 @@
+# WRITTEN BY AIDAN LEMAY
+# aidanlemay.com
+# admin@aidanlemay.com for more details
+
 import discord
 from discord.ext import commands
-from discord_slash import SlashCommand
+from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_option
 import subprocess
-from storage import tstore
+import storage
 import feedparser
 
-description = '''PiBot in Python'''
-bot = commands.Bot(command_prefix='/', description=description)
-TOKEN = tstore
+intents = discord.Intents.default()
+bot = commands.Bot(command_prefix="/", intents=intents)
+slash = SlashCommand(bot)
 
 @bot.event
 async def on_ready():
@@ -56,4 +60,4 @@ async def M911(ctx, num=1):
         i += 1
         await ctx.send(response)
 
-bot.run(TOKEN)
+bot.run(storage.tstore)
