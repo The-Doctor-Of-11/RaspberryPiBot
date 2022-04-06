@@ -10,12 +10,49 @@ import subprocess
 import storage
 import feedparser
 import json
+import pandas as pd
+from requests_html import HTML
+from requests_html import HTMLSession
 import requests
 from requests.exceptions import HTTPError
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="/", intents=intents)
 slash = SlashCommand(bot)
+
+# Sync Functions
+
+def get_source():
+    try:
+        session = HTMLSession()
+        response = session.get("https://www.monroecounty.gov/incidents911.rss")
+        return response
+
+    except requests.exceptions.RequestException as e:
+        print(e)
+
+def get_feed():
+    response = get_source()
+
+    df = pd.DataFrame()
+
+    with response as r:
+        items = r.html.find("item", first=False)
+
+        for item in items:        
+
+            title = item.find('title', first=True).text
+            
+            description = item.find('description', first=True).text
+
+            row = {'title': title, 'description': description}
+            df = df.append(row, ignore_index=True)
+
+    return df
+
+# End Sync Functions
+
+# Async Commands
 
 @bot.event
 async def on_ready():
@@ -30,32 +67,6 @@ bot.remove_command('help')
 async def help(ctx):
     """Gets Status of RPI Server"""
     await ctx.send("```\nRaspberryPiBot Discord Bot Help!\n\nCreated by Aidan LeMay using Discord.py\nhttps://github.com/The-Doctor-Of-11/RaspberryPiBot\n\n__Command Help:__\n/help: Display this help window\n/status or /stat: show status of Raspberry Pi Server\n/M911 [X#: Optional Quantity]: Returns X# of Monroe County 911 Events from https://www.monroecounty.gov/incidents911.rss\n\nVisit the creator here! https://aidanlemay.com/```")
-
-@bot.command()
-async def cronStat(ctx):
-    """Gets status of currently monitored CRON job"""
-    cron = subprocess.run(["curl https://cronitor.io/api/monitors -u " + storage.cronShork + ":"], shell=True, stdout=subprocess.PIPE).stdout.decode('utf8')
-    jcron = json.loads(cron)
-    jcron = jcron['monitors']
-    jcron = json.loads(jcron)
-
-    # jobName = jcron["monitors"]["name"]
-    # status = jcron["monitors"]["passing"]
-    # interval = jcron["monitors"]["schedule"]
-
-    # try:
-    #     jc = subprocess.run(["curl https://cronitor.io/api/monitors -u " + storage.cronShork + ":"], shell=True, stdout=subprocess.PIPE).stdout.decode('utf8')
-    #     response = json.loads(jc)
-    #     jsonResponse = response.json()
-    #     print(jsonResponse)
-
-    # except HTTPError as http_err:
-    #     print(f'HTTP error occurred: {http_err}')
-    # except Exception as err:
-    #     print(f'Other error occurred: {err}')
-
-    # await ctx.send("```\n Current Cron Status for " + jobName + ": \n\n" + status + "\n Run Schedule: " + interval + " \n```")
-    await ctx.send("```\n" + jcron['name'] + "\n```")
 
 @bot.command()
 async def status(ctx):
@@ -83,18 +94,18 @@ async def stat(ctx):
     await ctx.send("```\n---------- Apache Status ----------\n\n" + apache + "\n```")
 
 @bot.command()
-async def M911(ctx, num=1):
+async def m911(ctx, num=1):
 
-    d = feedparser.parse("https://www.monroecounty.gov/incidents911.rss")
-    entry = d.entries[num]
+    df = get_feed()
+    await ctx.send(df.head(num))
 
-    i = 0
-    while i < num:
-        response = "```\n----------- Event Title -------------\n\n" + d['entries'][i]['title'] + "\n"
-        response += "\n---------- Event Date --------------\n\n" + d['entries'][i]['published'] + "\n"
-        response += "\n---------- Description -------------\n\n" + d['entries'][i]['summary'] + "\n```"
-        i += 1
-        await ctx.send(response)
+@bot.command()
+async def ping(ctx):
+    await ctx.send("Pong!")
+
+@bot.command()
+async def Ping(ctx):
+    await ctx.send("Pong!")
 
 @bot.command()
 async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
