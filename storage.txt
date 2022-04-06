@@ -1,0 +1,4 @@
+tstore = 'DISCORD_TOKEN'
+cronShork = 'CRONTAB_TOKEN'
+# Guild ID's
+ids = [GUILD_ID]
