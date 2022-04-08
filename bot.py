@@ -8,13 +8,9 @@ from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_option
 import subprocess
 import storage
-import feedparser
-import json
 import pandas as pd
-from requests_html import HTML
 from requests_html import HTMLSession
 import requests
-from requests.exceptions import HTTPError
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="/", intents=intents)
