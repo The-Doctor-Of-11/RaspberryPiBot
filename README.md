@@ -8,7 +8,7 @@
 
 * Clone the project into the directory of your choice and `cd` into it
 * Activate or install your Virtual Environment if needed
-* Run `pip install -R requirements.txt`
+* Run `pip install -r requirements.txt`
 
 -- OR --
 
