@@ -31,6 +31,7 @@ def get_feed():
     response = get_source()
 
     df = pd.DataFrame()
+    out = list()
 
     with response as r:
         items = r.html.find("item", first=False)
@@ -41,10 +42,11 @@ def get_feed():
             
             description = item.find('description', first=True).text
 
-            row = {'title': title, 'description': description}
-            df = df.append(row, ignore_index=True)
+            pubdate = item.find('pubDate', first=True).text
 
-    return df
+            out.append(title + " | " + description + " | " + pubdate)
+
+    return out
 
 # End Sync Functions
 
@@ -93,7 +95,17 @@ async def stat(ctx):
 async def m911(ctx, num=1):
 
     df = get_feed()
-    await ctx.send(df.head(num))
+
+    if num > 20:
+        num = 20
+    elif num < 1:
+        num = 1
+
+    # for i in df:
+    j = 0
+    while j < num:
+        await ctx.send("```\n" + df[j] + "\n```")
+        j+=1
 
 @bot.command()
 async def ping(ctx):
