@@ -32,7 +32,7 @@
 * Install NPM (Node.JS Package Manager)
 * `sudo npm install pm2 -g`
 * `pm2 ls`
-* `pm2 start hello.py --watch` (Omit `--watch` if you don't want your project auto-served when the project files are changed)
+* `pm2 start bot.py --watch` (Omit `--watch` if you don't want your project auto-served when the project files are changed)
 
 ### Command Definitions
 * `/help`: Displays Help command with these definitions
