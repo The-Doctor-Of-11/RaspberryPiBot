@@ -29,8 +29,6 @@ def get_source():
 
 def get_feed():
     response = get_source()
-
-    df = pd.DataFrame()
     out = list()
 
     with response as r:
